@@ -1,0 +1,64 @@
+import java.util.*;
+
+public class Main {
+
+    static class Subarray {
+        int l, r;
+
+        Subarray(int l, int r) {
+            this.l = l;
+            this.r = r;
+        }
+    }
+
+    public static int calculatePairs(int n, int[] arr) {
+
+        HashMap<Long, ArrayList<Subarray>> map = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            long sum = 0;
+
+            for (int j = i; j < n; j++) {
+                sum += arr[j];
+
+                map.computeIfAbsent(sum, k -> new ArrayList<>())
+                   .add(new Subarray(i, j));
+            }
+        }
+
+        long ans = 0;
+
+        for (ArrayList<Subarray> list : map.values()) {
+
+            int m = list.size();
+
+            for (int i = 0; i < m; i++) {
+                Subarray a = list.get(i);
+
+                for (int j = i + 1; j < m; j++) {
+                    Subarray b = list.get(j);
+
+                    if (a.r < b.l || b.r < a.l) {
+                        ans++;
+                    }
+                }
+            }
+        }
+
+        return (int) ans;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int n = scanner.nextInt();
+
+        int[] arr = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+
+        System.out.println(calculatePairs(n, arr));
+    }
+}
