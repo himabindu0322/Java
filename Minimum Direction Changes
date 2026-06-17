@@ -1,0 +1,62 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+
+    static class Node {
+        int x, y;
+
+        Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public static int minDirectionChanges(char[][] grid, int n, int m) {
+
+        int[][] dist = new int[n][m];
+        for (int[] row : dist) {
+            Arrays.fill(row, Integer.MAX_VALUE);
+        }
+
+        int[] dx = {-1, 0, 1, 0}; // U, R, D, L
+        int[] dy = {0, 1, 0, -1};
+        char[] dir = {'U', 'R', 'D', 'L'};
+
+        Deque<Node> dq = new ArrayDeque<>();
+
+        dist[0][0] = 0;
+        dq.offerFirst(new Node(0, 0));
+
+        while (!dq.isEmpty()) {
+            Node cur = dq.pollFirst();
+
+            int x = cur.x;
+            int y = cur.y;
+
+            for (int k = 0; k < 4; k++) {
+                int nx = x + dx[k];
+                int ny = y + dy[k];
+
+                if (nx < 0 || ny < 0 || nx >= n || ny >= m) {
+                    continue;
+                }
+
+                // cost = 0 if moving in current cell's direction
+                int cost = (grid[x][y] == dir[k]) ? 0 : 1;
+
+                if (dist[x][y] + cost < dist[nx][ny]) {
+                    dist[nx][ny] = dist[x][y] + cost;
+
+                    if (cost == 0) {
+                        dq.offerFirst(new Node(nx, ny));
+                    } else {
+                        dq.offerLast(new Node(nx, ny));
+                    }
+                }
+            }
+        }
+
+        return dist[n - 1][m - 1];
+    }
+}
