@@ -1,0 +1,47 @@
+import java.util.*;
+
+public class Main {
+    public static long minCost(long[] v) {
+        int n = v.length;
+        if (n <= 1) return 0;
+        
+        // dp[i] will store the minimum cost to reach index i
+        long[] dp = new long[n];
+        Arrays.fill(dp, Long.MAX_VALUE);
+        
+        // Base case: cost to reach the first element is 0
+        dp[0] = 0;
+        
+        for (int i = 0; i < n; i++) {
+            // Jump of size 1
+            if (i + 1 < n) {
+                dp[i + 1] = Math.min(dp[i + 1], dp[i] + Math.abs(v[i + 1] - v[i]));
+            }
+            // Jump of size 2
+            if (i + 2 < n) {
+                dp[i + 2] = Math.min(dp[i + 2], dp[i] + Math.abs(v[i + 2] - v[i]));
+            }
+            // Jump of size 3
+            if (i + 3 < n) {
+                dp[i + 3] = Math.min(dp[i + 3], dp[i] + Math.abs(v[i + 3] - v[i]));
+            }
+        }
+        
+        return dp[n - 1];
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        
+        int n = scanner.nextInt();
+        long[] v = new long[n];
+        for (int i = 0; i < n; i++) {
+            v[i] = scanner.nextLong(); // Read as long due to 10^10 constraint
+        }
+
+        long result = minCost(v);
+        System.out.println(result);
+        scanner.close();
+    }
+}
