@@ -1,0 +1,35 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+
+    // Inserts an element into the sorted stack
+    private static void insert(Stack<Integer> stack, int element) {
+
+        // For descending order:
+        // Larger elements should stay on top
+        if (stack.isEmpty() || stack.peek() <= element) {
+            stack.push(element);
+            return;
+        }
+
+        int top = stack.pop();
+
+        insert(stack, element);
+
+        stack.push(top);
+    }
+
+    public static void sortStack(Stack<Integer> stack) {
+
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        int top = stack.pop();
+
+        sortStack(stack);
+
+        insert(stack, top);
+    }
+}
