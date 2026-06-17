@@ -1,0 +1,49 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        // Read N
+        String line1 = br.readLine();
+        if (line1 == null || line1.trim().isEmpty()) return;
+        int n = Integer.parseInt(line1.trim());
+        
+        // Read Array A
+        int[] a = new int[n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < n; i++) {
+            a[i] = Integer.parseInt(st.nextToken());
+        }
+        
+        // Read Target K
+        int k = Integer.parseInt(br.readLine().trim());
+        
+        // Step 1: Sort the array
+        Arrays.sort(a);
+        
+        // Step 2: Track indices where a[i] == k
+        List<Integer> matchedIndices = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (a[i] == k) {
+                matchedIndices.add(i);
+            }
+        }
+        
+        // Step 3: Print Output
+        System.out.println(matchedIndices.size());
+        
+        if (!matchedIndices.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < matchedIndices.size(); i++) {
+                sb.append(matchedIndices.get(i));
+                if (i < matchedIndices.size() - 1) {
+                    sb.append(" ");
+                }
+            }
+            System.out.println(sb.toString());
+        }
+    }
+}
