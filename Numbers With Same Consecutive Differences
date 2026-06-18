@@ -1,0 +1,36 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+
+    private static void dfs(int num, int len, int N, int K, ArrayList<Integer> result) {
+        if (len == N) {
+            result.add(num);
+            return;
+        }
+
+        int lastDigit = num % 10;
+
+        int next1 = lastDigit + K;
+        if (next1 <= 9) {
+            dfs(num * 10 + next1, len + 1, N, K, result);
+        }
+
+        int next2 = lastDigit - K;
+        if (K != 0 && next2 >= 0) {
+            dfs(num * 10 + next2, len + 1, N, K, result);
+        }
+    }
+
+    public static ArrayList<Integer> numberWithSameConsecutiveDifference(int N, int K) {
+
+        ArrayList<Integer> result = new ArrayList<>();
+
+        for (int digit = 1; digit <= 9; digit++) {
+            dfs(digit, 1, N, K, result);
+        }
+
+        Collections.sort(result);
+        return result;
+    }
+}
