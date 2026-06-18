@@ -1,0 +1,52 @@
+class Solution {
+    public int findCoverage(int[][] mat) {
+        int n = mat.length;
+        int m = mat[0].length;
+        int totalCoverage = 0;
+        
+        // Iterate through each cell in the binary matrix
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                
+                // Process only when we find a 0
+                if (mat[i][j] == 0) {
+                    
+                    // 1. Check UP direction
+                    for (int k = i - 1; k >= 0; k--) {
+                        if (mat[k][j] == 1) {
+                            totalCoverage++;
+                            break; // Stop looking further up
+                        }
+                    }
+                    
+                    // 2. Check DOWN direction
+                    for (int k = i + 1; k < n; k++) {
+                        if (mat[k][j] == 1) {
+                            totalCoverage++;
+                            break; // Stop looking further down
+                        }
+                    }
+                    
+                    // 3. Check LEFT direction
+                    for (int k = j - 1; k >= 0; k--) {
+                        if (mat[i][k] == 1) {
+                            totalCoverage++;
+                            break; // Stop looking further left
+                        }
+                    }
+                    
+                    // 4. Check RIGHT direction
+                    for (int k = j + 1; k < m; k++) {
+                        if (mat[i][k] == 1) {
+                            totalCoverage++;
+                            break; // Stop looking further right
+                        }
+                    }
+                    
+                }
+            }
+        }
+        
+        return totalCoverage;
+    }
+}
