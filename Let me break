@@ -1,0 +1,55 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Main {
+    public static boolean check_if_can_break(String s1, String s2) {
+        // Edge case: If lengths are different, return false as per problem description
+        if (s1.length() != s2.length()) {
+            return false;
+        }
+
+        // Convert strings to character arrays
+        char[] chars1 = s1.toCharArray();
+        char[] chars2 = s2.toCharArray();
+
+        // Sort both arrays to get the optimal greedy arrangement
+        Arrays.sort(chars1);
+        Arrays.sort(chars2);
+
+        boolean s1BreaksS2 = true;
+        boolean s2BreaksS1 = true;
+
+        // Check both conditions in a single pass
+        for (int i = 0; i < chars1.length; i++) {
+            if (chars1[i] < chars2[i]) {
+                s1BreaksS2 = false; // s1 fails to break s2
+            }
+            if (chars2[i] < chars1[i]) {
+                s2BreaksS1 = false; // s2 fails to break s1
+            }
+        }
+
+        // If either string successfully breaks the other completely, return true
+        return s1BreaksS2 || s2BreaksS1;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Use hasNextLine checking to gracefully handle hidden platform inputs
+        if (scanner.hasNextLine()) {
+            String s1 = scanner.nextLine().trim();
+            if (scanner.hasNextLine()) {
+                String s2 = scanner.nextLine().trim();
+                
+                boolean result = check_if_can_break(s1, s2);
+                if (result) {
+                    System.out.println("true");
+                } else {
+                    System.out.println("false");
+                }
+            }
+        }
+        scanner.close();
+    }
+}
