@@ -1,0 +1,45 @@
+import java.util.*;
+
+public class Main {
+
+    public static long userLogic(int n, int[] arr) {
+
+        long[] freq = new long[33];
+
+        for (int x : arr) {
+
+            if (x == 0) {
+                freq[32]++;
+            } else {
+                int msb = 31 - Integer.numberOfLeadingZeros(x);
+                freq[msb]++;
+            }
+        }
+
+        long ans = 0;
+
+        for (int i = 0; i < 33; i++) {
+            long cnt = freq[i];
+            ans += cnt * (cnt - 1) / 2;
+        }
+
+        return ans;
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+
+        int[] arr = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            arr[i] = sc.nextInt();
+        }
+
+        System.out.println(userLogic(n, arr));
+
+        sc.close();
+    }
+}
