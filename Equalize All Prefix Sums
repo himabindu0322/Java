@@ -1,0 +1,19 @@
+import java.util.ArrayList;
+
+class Solution {
+    public ArrayList<Integer> optimalArray(int[] arr) {
+        int n = arr.length;
+        ArrayList<Integer> ans = new ArrayList<>(n);
+        
+        // Base case: a single element prefix requires 0 operations
+        ans.add(0);
+        
+        // Compute the minimum operations sequentially using the recurrence relation
+        for (int i = 1; i < n; i++) {
+            int operations = ans.get(i - 1) + (arr[i] - arr[i / 2]);
+            ans.add(operations);
+        }
+        
+        return ans;
+    }
+}
