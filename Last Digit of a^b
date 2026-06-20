@@ -1,0 +1,30 @@
+class Solution {
+    public int getLastDigit(String a, String b) {
+        // Edge case: If exponent is "0", any number^0 is 1
+        if (b.equals("0")) {
+            return 1;
+        }
+        
+        // Edge case: If base is "0", 0^any_positive_power is 0
+        if (a.equals("0")) {
+            return 0;
+        }
+
+        // 1. Get the last digit of the base 'a'
+        int lastDigitOfA = a.charAt(a.length() - 1) - '0';
+
+        // 2. Find b % 4
+        // To find mod 4 of a large string number, we only need its last two digits.
+        int modB = 0;
+        for (int i = 0; i < b.length(); i++) {
+            modB = (modB * 10 + (b.charAt(i) - '0')) % 4;
+        }
+
+        // 3. If modB is 0, it means the exponent is a multiple of 4.
+        // We use 4 instead of 0 to get the correct cyclical last digit.
+        int exp = (modB == 0) ? 4 : modB;
+
+        // 4. Calculate (lastDigitOfA ^ exp) % 10
+        return (int) Math.pow(lastDigitOfA, exp) % 10;
+    }
+}
