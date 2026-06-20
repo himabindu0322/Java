@@ -1,0 +1,120 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    private static int timer;
+
+    public static int[] countBridge(int n, int m, int q, int[][] edges, int[][] queries) {
+        int[] ans = new int[q];
+
+        // Process each query independently
+        for (int i = 0; i < q; i++) {
+            int a = queries[i][0];
+            int b = queries[i][1];
+            int c = queries[i][2];
+            int d = queries[i][3];
+
+            // Build the adjacency list with the base edges + temporary edge (a, b)
+            List<List<Integer>> adj = new ArrayList<>();
+            for (int j = 0; j < n; j++) {
+                adj.add(new ArrayList<>());
+            }
+
+            for (int[] edge : edges) {
+                adj.get(edge[0]).add(edge[1]);
+                adj.get(edge[1]).add(edge[0]);
+            }
+            // Add temporary query edge
+            adj.get(a).add(b);
+            adj.get(b).add(a);
+
+            // 1. Find all bridges in the current configuration
+            boolean[][] isBridge = new boolean[n][n];
+            int[] tin = new int[n];
+            int[] low = new int[n];
+            boolean[] visited = new boolean[n];
+            Arrays.fill(tin, -1);
+            Arrays.fill(low, -1);
+            timer = 0;
+
+            for (int j = 0; j < n; j++) {
+                if (!visited[j]) {
+                    findBridges(j, -1, adj, visited, tin, low, isBridge);
+                }
+            }
+
+            // 2. Find any simple path from C to D using BFS and count bridges
+            ans[i] = countBridgesOnPath(c, d, n, adj, isBridge);
+        }
+
+        return ans;
+    }
+
+    private static void findBridges(int u, int p, List<List<Integer>> adj, boolean[] visited, 
+                                    int[] tin, int[] low, boolean[][] isBridge) {
+        visited[u] = true;
+        tin[u] = low[u] = timer++;
+
+        for (int v : adj.get(u)) {
+            if (v == p) continue; // Skip direct edge to parent
+            
+            if (visited[v]) {
+                low[u] = Math.min(low[u], tin[v]);
+            } else {
+                findBridges(v, u, adj, visited, tin, low, isBridge);
+                low[u] = Math.min(low[u], low[v]);
+                
+                // Bridge condition
+                if (low[v] > tin[u]) {
+                    isBridge[u][v] = true;
+                    isBridge[v][u] = true;
+                }
+            }
+        }
+    }
+
+    private static int countBridgesOnPath(int start, int end, int n, List<List<Integer>> adj, boolean[][] isBridge) {
+        if (start == end) return 0;
+
+        int[] parent = new int[n];
+        Arrays.fill(parent, -1);
+        boolean[] visited = new boolean[n];
+        
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(start);
+        visited[start] = true;
+
+        boolean found = false;
+        while (!queue.isEmpty()) {
+            int curr = queue.poll();
+            if (curr == end) {
+                found = true;
+                break;
+            }
+
+            for (int neighbor : adj.get(curr)) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    parent[neighbor] = curr;
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        // If end node is not reachable (should not happen since graph is connected), return 0
+        if (!found) return 0;
+
+        // Reconstruct path from 'end' to 'start' and count bridge transitions
+        int bridgeCount = 0;
+        int curr = end;
+        while (parent[curr] != -1) {
+            int p = parent[curr];
+            if (isBridge[curr][p]) {
+                bridgeCount++;
+            }
+            curr = p;
+        }
+
+        return bridgeCount;
+    }
+}
