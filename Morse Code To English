@@ -1,0 +1,42 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution 
+{    
+    public static String morseToEnglish(String morsecode) 
+    {
+        // Provided Morse code mapping array
+        String[] list = { 
+            ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---", 
+            "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-", 
+            "..-", "...-", ".--", "-..-", "-.--", "--..", "-----", ".----", "..---", 
+            "...--", "....-", ".....", "-....", "--...", "---..", "----." 
+        };      
+
+        // Map to store Morse code as key and its corresponding alphanumeric character as value
+        HashMap<String, Character> morseMap = new HashMap<>();
+
+        // Map indices 0 to 25 to characters 'a' to 'z'
+        for (int i = 0; i < 26; i++) {
+            morseMap.put(list[i], (char) ('a' + i));
+        }
+
+        // Map indices 26 to 35 to characters '0' to '9'
+        for (int i = 26; i < 36; i++) {
+            morseMap.put(list[i], (char) ('0' + (i - 26)));
+        }
+
+        // Split the input string into individual tokens based on space delimiter
+        String[] tokens = morsecode.trim().split("\\s+");
+        StringBuilder englishText = new StringBuilder();
+
+        // Convert each token into its corresponding character
+        for (String token : tokens) {
+            if (morseMap.containsKey(token)) {
+                englishText.append(morseMap.get(token));
+            }
+        }
+
+        return englishText.toString();
+    }
+}
