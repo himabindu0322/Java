@@ -1,0 +1,73 @@
+import java.util.Scanner;
+
+public class Main {
+    public static int longestPalindromicSubstringLength(int n, String s) {
+        if (n <= 1) {
+            return n;
+        }
+
+        // Pre-process string to insert delimiters: e.g., "aba" -> "^|#|a|#|b|#|a|#|$"
+        // This avoids handling odd/even lengths separately.
+        char[] T = new char[2 * n + 3];
+        T[0] = '^';
+        T[2 * n + 2] = '$';
+        
+        for (int i = 0; i < n; i++) {
+            T[2 * i + 1] = '#';
+            T[2 * i + 2] = s.charAt(i);
+        }
+        T[2 * n + 1] = '#';
+
+        int[] P = new int[T.length];
+        int C = 0, R = 0; // Center and Right boundary of the current furthest palindrome
+        int maxLen = 0;
+
+        for (int i = 1; i < T.length - 1; i++) {
+            int iMirror = 2 * C - i; // Mirror of i around center C
+
+            // If i is within the boundary, initialize P[i] using its mirror's value
+            if (R > i) {
+                P[i] = Math.min(R - i, P[iMirror]);
+            } else {
+                P[i] = 0;
+            }
+
+            // Attempt to expand the palindrome centered at i
+            while (T[i + 1 + P[i]] == T[i - 1 - P[i]]) {
+                P[i]++;
+            }
+
+            // If the palindrome centered at i expands past R, adjust C and R
+            if (i + P[i] > R) {
+                C = i;
+                R = i + P[i];
+            }
+
+            // Track the maximum palindrome radius found
+            if (P[i] > maxLen) {
+                maxLen = P[i];
+            }
+        }
+
+        // In the transformed string, the radius P[i] directly matches 
+        // the length of the palindrome in the original string.
+        return maxLen;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        
+        int n = scanner.nextInt();
+        if (n == 0) {
+            System.out.println(0);
+            return;
+        }
+        String s = scanner.next();
+        
+        int result = longestPalindromicSubstringLength(n, s);
+        System.out.println(result);
+        
+        scanner.close();
+    }
+}
