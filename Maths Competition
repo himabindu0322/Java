@@ -1,0 +1,86 @@
+import java.util.*;
+
+public class Main {
+
+    // Helper function to check if the team can solve at least K problems in 'time'
+    private static boolean canSolve(long time, long[] A, long K) {
+        long totalProblems = 0;
+        for (long memberTime : A) {
+            if (memberTime == 0) {
+                // If a member takes 0 time, they can solve infinite problems instantly
+                return true; 
+            }
+            totalProblems += (time / memberTime);
+            // Early exit if we already met or exceeded K to prevent long overflow
+            if (totalProblems >= K) {
+                return true;
+            }
+        }
+        return totalProblems >= K;
+    }
+
+    public static long minimumTime(int N, long K, long[] A) {
+        // If no problems need to be solved, it takes 0 time
+        if (K == 0) {
+            return 0;
+        }
+        
+        // If there are problems but no team members, it's impossible
+        if (N == 0) {
+            return -1;
+        }
+
+        // Find the minimum time factor among members to establish an upper bound optimization
+        long minMemberTime = Long.MAX_VALUE;
+        boolean hasZero = false;
+        for (long val : A) {
+            if (val == 0) {
+                hasZero = true;
+            }
+            if (val < minMemberTime) {
+                minMemberTime = val;
+            }
+        }
+
+        // If a member can solve problems in 0 time, total time required is 0
+        if (hasZero) {
+            return 0;
+        }
+
+        long low = 0;
+        // Upper bound: The fastest individual member solving all K problems on their own
+        long high = minMemberTime * K; 
+        long ans = -1;
+
+        // Perform Binary Search
+        while (low <= high) {
+            long mid = low + (high - low) / 2;
+
+            if (canSolve(mid, A, K)) {
+                ans = mid;        // 'mid' is a valid time frame, save it
+                high = mid - 1;   // Try to find an even smaller minimum time
+            } else {
+                low = mid + 1;    // 'mid' is too short, we need more time
+            }
+        }
+
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+
+        int N = sc.nextInt();
+        long K = sc.nextLong();
+
+        long[] A = new long[N];
+        for (int i = 0; i < N; i++) {
+            A[i] = sc.nextLong();
+        }
+
+        System.out.println(minimumTime(N, K, A));
+
+        sc.close();
+    }
+}
