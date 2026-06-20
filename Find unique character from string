@@ -1,0 +1,55 @@
+import java.util.Scanner;
+import java.util.HashSet;
+
+class Main {
+    public static void determine_winner(int N, String smit_str, String joy_str) {
+        // Edge case: If length is 0, it's an immediate tie
+        if (N == 0) {
+            System.out.println("TIE");
+            return;
+        }
+
+        // Use HashSets to store unique characters
+        HashSet<Character> smitSet = new HashSet<>();
+        HashSet<Character> joySet = new HashSet<>();
+
+        // Populate Smit's unique characters
+        for (int i = 0; i < smit_str.length(); i++) {
+            smitSet.add(smit_str.charAt(i));
+        }
+
+        // Populate Joy's unique characters
+        for (int i = 0; i < joy_str.length(); i++) {
+            joySet.add(joy_str.charAt(i));
+        }
+
+        // Get the count of unique characters
+        int smitUniqueCount = smitSet.size();
+        int joyUniqueCount = joySet.size();
+
+        // Since both strings have the same length N, 
+        // comparing unique counts is equivalent to comparing means.
+        if (smitUniqueCount > joyUniqueCount) {
+            System.out.println("SMIT");
+        } else if (joyUniqueCount > smitUniqueCount) {
+            System.out.println("JOY");
+        } else {
+            System.out.println("TIE");
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        
+        int N = scanner.nextInt();
+        scanner.nextLine(); // consume the newline
+        
+        // Handle cases where next lines might be empty safely
+        String smit_str = (N > 0 && scanner.hasNextLine()) ? scanner.nextLine() : "";
+        String joy_str = (N > 0 && scanner.hasNextLine()) ? scanner.nextLine() : "";
+        
+        determine_winner(N, smit_str, joy_str);
+        scanner.close();
+    }
+}
