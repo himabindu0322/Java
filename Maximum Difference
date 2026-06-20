@@ -1,0 +1,58 @@
+import java.util.*;
+
+public class Main {
+    // Keep track of the current test case index across multiple method calls
+    private static int testCaseIndex = 0;
+
+    public static void userLogic(int n, int[] arr, int[] result) {
+        // Handle edge case where array size is less than 2
+        if (n < 2) {
+            result[testCaseIndex++] = -1;
+            return;
+        }
+
+        int minElement = arr[0];
+        int maxDiff = -1;
+
+        // Traverse the array to find the max difference
+        for (int i = 1; i < n; i++) {
+            if (arr[i] > minElement) {
+                int currentDiff = arr[i] - minElement;
+                if (currentDiff > maxDiff) {
+                    maxDiff = currentDiff;
+                }
+            }
+            
+            // Update minElement to ensure we subtract by the lowest possible value so far
+            if (arr[i] < minElement) {
+                minElement = arr[i];
+            }
+        }
+
+        // Store the answer for the current test case and move the index pointer forward
+        result[testCaseIndex++] = maxDiff;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        
+        int T = sc.nextInt();
+        int[] results = new int[T];
+        
+        for (int t = 0; t < T; t++) {
+            int N = sc.nextInt();
+            int[] arr = new int[N];
+            for (int i = 0; i < N; i++) {
+                arr[i] = sc.nextInt();
+            }
+            
+            userLogic(N, arr, results);
+        }
+        
+        for (int result : results) {
+            System.out.println(result);
+        }
+        sc.close();
+    }
+}
