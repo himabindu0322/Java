@@ -1,0 +1,89 @@
+import java.util.*;
+
+public class Main {
+    public static String[] userLogic(int n, int[] arr) {
+        // Create copies for both arrangements
+        int[] nonDecreasing = arr.clone();
+        Arrays.sort(nonDecreasing); // Natural ascending sort
+        
+        int[] nonIncreasing = new int[n];
+        for (int i = 0; i < n; i++) {
+            nonIncreasing[i] = nonDecreasing[n - 1 - i];
+        }
+
+        // Validate both orders
+        boolean isIncValid = checkPrefixSumValid(nonDecreasing);
+        boolean isDecValid = checkPrefixSumValid(nonIncreasing);
+
+        boolean pickDec = false;
+        boolean pickInc = false;
+
+        if (isIncValid && isDecValid) {
+            // Tie-breaking rule: Choose the arrangement starting with the larger element
+            if (nonIncreasing[0] >= nonDecreasing[0]) {
+                pickDec = true;
+            } else {
+                pickInc = true;
+            }
+        } else if (isDecValid) {
+            pickDec = true;
+        } else if (isIncValid) {
+            pickInc = true;
+        }
+
+        // Build the required result String array
+        if (pickDec) {
+            return buildOutputArray("POSSIBLE", nonIncreasing);
+        } else if (pickInc) {
+            return buildOutputArray("POSSIBLE", nonDecreasing);
+        }
+
+        return new String[] {"IMPOSSIBLE"};
+    }
+
+    // Helper method to verify if any cumulative prefix sum equals zero
+    private static boolean checkPrefixSumValid(int[] sequence) {
+        int currentSum = 0;
+        for (int num : sequence) {
+            currentSum += num;
+            if (currentSum == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Formats the response to match the template's output unpacking expectations
+    private static String[] buildOutputArray(String status, int[] sequence) {
+        String[] out = new String[sequence.length + 1];
+        out[0] = status;
+        for (int i = 0; i < sequence.length; i++) {
+            out[i + 1] = String.valueOf(sequence[i]);
+        }
+        return out;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+        scanner.close();
+        
+        // Call user logic function
+        String[] result = userLogic(n, arr);
+        
+        // Print the output based on the result from user logic
+        if (result[0].equals("IMPOSSIBLE")) {
+            System.out.println("IMPOSSIBLE");
+        } else {
+            System.out.println("POSSIBLE");
+            for (int i = 1; i < result.length; i++) {
+                System.out.print(result[i] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
