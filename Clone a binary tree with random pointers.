@@ -1,0 +1,77 @@
+import java.util.*;
+import java.io.*; 
+
+/************************************************************
+
+    Following is the TreeNode class structure (given for reference)
+
+    class TreeNode<T> 
+    {
+        T data;
+        TreeNode<T> left;
+        TreeNode<T> right;
+        TreeNode<T> random;
+
+        TreeNode(T data) 
+        {
+            this.data = data;
+            left = null;
+            right = null;
+            random = null;
+        }
+    };
+
+*************************************************************/
+
+public class Solution 
+{
+    public static TreeNode<Integer> cloneBinaryTreeRandomPointer(TreeNode<Integer> root)
+    {
+        // Map to establish structural pairs: Original Node -> Cloned Node
+        HashMap<TreeNode<Integer>, TreeNode<Integer>> nodeMap = new HashMap<>();
+        
+        // Step 1: Create a clone structure of left and right children
+        TreeNode<Integer> clonedRoot = cloneStructure(root, nodeMap);
+        
+        // Step 2: Wire up the random connections across the cloned tree
+        connectRandomPointers(root, nodeMap);
+        
+        return clonedRoot;
+    }
+
+    // Helper method to deep copy values, left, and right pointers
+    private static TreeNode<Integer> cloneStructure(TreeNode<Integer> root, HashMap<TreeNode<Integer>, TreeNode<Integer>> nodeMap) {
+        if (root == null) {
+            return null;
+        }
+
+        // Create the new deep-copied node
+        TreeNode<Integer> newRoot = new TreeNode<>(root.data);
+        nodeMap.put(root, newRoot);
+
+        // Recursively build out the left and right subtrees
+        newRoot.left = cloneStructure(root.left, nodeMap);
+        newRoot.right = cloneStructure(root.right, nodeMap);
+
+        return newRoot;
+    }
+
+    // Helper method to attach random paths using the HashMap lookup
+    private static void connectRandomPointers(TreeNode<Integer> root, HashMap<TreeNode<Integer>, TreeNode<Integer>> nodeMap) {
+        if (root == null) {
+            return;
+        }
+
+        // Locate the matching cloned node
+        TreeNode<Integer> clonedNode = nodeMap.get(root);
+        
+        // Assign its random child to the cloned counterpart of original's random destination
+        if (root.random != null) {
+            clonedNode.random = nodeMap.get(root.random);
+        }
+
+        // Recurse for the rest of the tree
+        connectRandomPointers(root.left, nodeMap);
+        connectRandomPointers(root.right, nodeMap);
+    }
+}
