@@ -1,0 +1,54 @@
+import java.util.Arrays;
+
+class Solution {
+    public String chooseSwap(String s) {
+        int n = s.length();
+        
+        // Array to store the first occurrence index of each character 'a' through 'z'
+        int[] firstOccur = new int[26];
+        Arrays.fill(firstOccur, -1);
+        
+        for (int i = 0; i < n; i++) {
+            int charIdx = s.charAt(i) - 'a';
+            if (firstOccur[charIdx] == -1) {
+                firstOccur[charIdx] = i;
+            }
+        }
+        
+        // Find the first character that can be replaced by a smaller character
+        char charToReplace = ' ';
+        char smallerChar = ' ';
+        boolean found = false;
+        
+        for (int i = 0; i < n; i++) {
+            char curr = s.charAt(i);
+            
+            // Check for any character strictly smaller than 'curr'
+            for (char ch = 'a'; ch < curr; ch++) {
+                // If 'ch' exists in the string and its first occurrence is ahead of 'i'
+                if (firstOccur[ch - 'a'] > i) {
+                    charToReplace = curr;
+                    smallerChar = ch;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        
+        // If an optimal swap is found, perform the swap across the string
+        if (found) {
+            char[] arr = s.toCharArray();
+            for (int i = 0; i < n; i++) {
+                if (arr[i] == charToReplace) {
+                    arr[i] = smallerChar;
+                } else if (arr[i] == smallerChar) {
+                    arr[i] = charToReplace;
+                }
+            }
+            return new String(arr);
+        }
+        
+        return s;
+    }
+}
