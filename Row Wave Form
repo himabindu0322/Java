@@ -1,0 +1,34 @@
+import java.util.*;
+import java.io.*; 
+import java.util.ArrayList;
+
+public class Solution {
+
+    public static ArrayList<Integer> rowWaveForm(ArrayList<ArrayList<Integer>> mat) {
+        ArrayList<Integer> wave = new ArrayList<>();
+        
+        // Handle empty matrix edge case
+        if (mat == null || mat.isEmpty() || mat.get(0).isEmpty()) {
+            return wave;
+        }
+
+        int n = mat.size();       // Number of rows
+        int m = mat.get(0).size(); // Number of columns
+
+        for (int i = 0; i < n; i++) {
+            if (i % 2 == 0) {
+                // Even row: Left to Right
+                for (int j = 0; j < m; j++) {
+                    wave.add(mat.get(i).get(j));
+                }
+            } else {
+                // Odd row: Right to Left
+                for (int j = m - 1; j >= 0; j--) {
+                    wave.add(mat.get(i).get(j));
+                }
+            }
+        }
+
+        return wave;
+    }
+}
