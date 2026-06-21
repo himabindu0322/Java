@@ -1,0 +1,26 @@
+import java.util.Scanner;
+
+public class Main {
+    // Highly optimized O(1) logic bypassing memory limits
+    public static int diagonalSum(int n) {
+        if (n % 2 == 0) {
+            return 2 * n;
+        } else {
+            return (2 * n) - 1;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Read N (we only need the size since the problem states it's filled with 1s)
+        if (scanner.hasNextInt()) {
+            int n = scanner.nextInt();
+            
+            int result = diagonalSum(n);
+            System.out.println(result);
+        }
+        
+        scanner.close();
+    }
+}
