@@ -1,0 +1,228 @@
+import java.util.*;
+
+public class Solution {
+    
+    // Represents the structural properties of a path segment
+    static class Node {
+        boolean up_up, up_down, down_up, down_down;
+        boolean is_empty;
+        int left_val, right_val;
+
+        // Base constructor for single leaf elements
+        Node() {
+            this.is_empty = true;
+        }
+
+        Node(int val) {
+            this.left_val = val;
+            this.right_val = val;
+            this.up_up = this.up_down = this.down_up = this.down_down = true;
+            this.is_empty = false;
+        }
+    }
+
+    // Merges left segment and right segment securely
+    static Node merge(Node L, Node R) {
+        if (L.is_empty) return R;
+        if (R.is_empty) return L;
+
+        Node res = new Node();
+        res.is_empty = false;
+        res.left_val = L.left_val;
+        res.right_val = R.right_val;
+
+        // Check internal boundary transitions
+        boolean can_go_up = L.right_val < R.left_val;
+        boolean can_go_down = L.right_val > R.left_val;
+
+        if (can_go_up) {
+            res.up_up |= (L.up_down && R.up_up) || (L.up_up && R.down_up);
+            res.up_down |= (L.up_down && R.up_down) || (L.up_up && R.down_down);
+            res.down_up |= (L.down_down && R.up_up) || (L.down_up && R.down_up);
+            res.down_down |= (L.down_down && R.up_down) || (L.down_up && R.down_down);
+        }
+        if (can_go_down) {
+            res.up_up |= (L.up_up && R.up_up) || (L.up_down && R.down_up);
+            res.up_down |= (L.up_up && R.up_down) || (L.up_down && R.down_down);
+            res.down_up |= (L.down_up && R.up_up) || (L.down_down && R.down_up);
+            res.down_down |= (L.down_up && R.up_down) || (L.down_down && R.down_down);
+        }
+
+        return res;
+    }
+
+    // Reverses a structural node's attributes if traversed backwards
+    static Node reverseNode(Node node) {
+        if (node.is_empty) return node;
+        Node res = new Node();
+        res.is_empty = false;
+        res.left_val = node.right_val;
+        res.right_val = node.left_val;
+        res.up_up = node.down_down;
+        res.down_down = node.up_up;
+        res.up_down = node.up_down;
+        res.down_up = node.down_up;
+        return res;
+    }
+
+    // Standard Heavy-Light Decomposition components
+    static int[] parentArr, depth, heavy, head, pos;
+    static int curPos;
+    static ArrayList<Integer>[] adj;
+    static Node[] tree;
+    static int[] initialHeights;
+
+    public static ArrayList<String> alternatingPaths(int n, int q, int[][] edges, int[] height, int[][] queries) {
+        parentArr = new int[n + 1];
+        depth = new int[n + 1];
+        heavy = new int[n + 1];
+        head = new int[n + 1];
+        pos = new int[n + 1];
+        initialHeights = new int[n + 1];
+        
+        Arrays.fill(heavy, -1);
+        curPos = 1;
+        
+        adj = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) {
+            adj[i] = new ArrayList<>();
+            initialHeights[i] = height[i - 1];
+        }
+
+        for (int[] edge : edges) {
+            adj[edge[0]].add(edge[1]);
+            adj[edge[1]].add(edge[0]);
+        }
+
+        // Initialize structural properties of HLD
+        dfsDominant(1, 0, 0);
+        decompose(1, 1);
+
+        // Build Segment Tree
+        tree = new Node[4 * (n + 1)];
+        buildTree(1, 1, n);
+
+        ArrayList<String> result = new ArrayList<>();
+
+        for (int[] query : queries) {
+            int type = query[0];
+            if (type == 1) {
+                int city = query[1];
+                int newH = query[2];
+                updateTree(1, 1, n, pos[city], newH);
+            } else {
+                int u = query[1];
+                int v = query[2];
+                Node finalPath = queryPath(u, v, n);
+                if (finalPath.up_up || finalPath.up_down || finalPath.down_up || finalPath.down_down) {
+                    result.add("YES");
+                } else {
+                    result.add("NO");
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static int dfsDominant(int u, int p, int d) {
+        parentArr[u] = p;
+        depth[u] = d;
+        int size = 1;
+        int maxSubtreeSize = 0;
+        for (int v : adj[u]) {
+            if (v != p) {
+                int subtreeSize = dfsDominant(v, u, d + 1);
+                size += subtreeSize;
+                if (subtreeSize > maxSubtreeSize) {
+                    maxSubtreeSize = subtreeSize;
+                    heavy[u] = v;
+                }
+            }
+        }
+        return size;
+    }
+
+    private static void decompose(int u, int h) {
+        head[u] = h;
+        pos[u] = curPos++;
+        if (heavy[u] != -1) {
+            decompose(heavy[u], h);
+        }
+        for (int v : adj[u]) {
+            if (v != parentArr[u] && v != heavy[u]) {
+                decompose(v, v);
+            }
+        }
+    }
+
+    private static void buildTree(int node, int start, int end) {
+        if (start == end) {
+            // Find which node corresponds to this segment position index
+            return;
+        }
+        int mid = (start + end) >> 1;
+        buildTree(2 * node, start, mid);
+        buildTree(2 * node + 1, mid + 1, end);
+        // Leaves are initiated dynamically inside update down below during execution or setup
+    }
+
+    private static void updateTree(int node, int start, int end, int idx, int val) {
+        if (start == end) {
+            tree[node] = new Node(val);
+            return;
+        }
+        int mid = (start + end) >> 1;
+        if (idx <= mid) updateTree(2 * node, start, mid, idx, val);
+        else updateTree(2 * node + 1, mid + 1, end, idx, val);
+        
+        if (tree[2 * node] == null) tree[2 * node] = new Node(initialHeights[start]); 
+        if (tree[2 * node + 1] == null) tree[2 * node + 1] = new Node(initialHeights[mid + 1]); 
+        
+        tree[node] = merge(tree[2 * node], tree[2 * node + 1]);
+    }
+
+    private static Node rangeQuery(int node, int start, int end, int l, int r) {
+        if (r < start || end < l) return new Node();
+        if (l <= start && end <= r) {
+            if (tree[node] == null) {
+                // Instantiation safety check fallback
+                if(start == end) return new Node(initialHeights[start]);
+                int mid = (start + end) >> 1;
+                return merge(rangeQuery(2 * node, start, mid, l, r), rangeQuery(2 * node + 1, mid + 1, end, l, r));
+            }
+            return tree[node];
+        }
+        int mid = (start + end) >> 1;
+        return merge(rangeQuery(2 * node, start, mid, l, r), rangeQuery(2 * node + 1, mid + 1, end, l, r));
+    }
+
+    private static Node queryPath(int u, int v, int n) {
+        Node leftNode = new Node();
+        Node rightNode = new Node();
+
+        while (head[u] != head[v]) {
+            if (depth[head[u]] > depth[head[v]]) {
+                Node segment = rangeQuery(1, 1, n, pos[head[u]], pos[u]);
+                leftNode = merge(segment, leftNode); // Going up to root: append left safely
+                u = parentArr[head[u]];
+            } else {
+                Node segment = rangeQuery(1, 1, n, pos[head[v]], pos[v]);
+                rightNode = merge(segment, rightNode);
+                v = parentArr[head[v]];
+            }
+        }
+
+        if (depth[u] > depth[v]) {
+            Node segment = rangeQuery(1, 1, n, pos[v], pos[u]);
+            leftNode = merge(segment, leftNode);
+        } else {
+            Node segment = rangeQuery(1, 1, n, pos[u], pos[v]);
+            rightNode = merge(segment, rightNode);
+        }
+
+        // Reverse right chain to turn downward tracking to normal progression flow
+        rightNode = reverseNode(rightNode);
+        return merge(reverseNode(leftNode), rightNode);
+    }
+}
