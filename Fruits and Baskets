@@ -1,0 +1,49 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    public static int getMaxFruits(ArrayList<Integer> basket, int n) {
+        // Table to store results of subproblems
+        int[][] dp = new int[n][n];
+        for (int[] row : dp) {
+            Arrays.fill(row, -1);
+        }
+        
+        return computeMaxFruits(basket, 0, n - 1, dp);
+    }
+
+    private static int computeMaxFruits(ArrayList<Integer> basket, int i, int j, int[][] dp) {
+        // Base case: If there are no baskets left
+        if (i > j) {
+            return 0;
+        }
+        // Base case: If there is only one basket left, the current player takes it
+        if (i == j) {
+            return basket.get(i);
+        }
+        
+        // Return cached result if already evaluated
+        if (dp[i][j] != -1) {
+            return dp[i][j];
+        }
+
+        // Option 1: Kevin picks the left-most basket 'i'
+        // Mark will then optimally leave Kevin with the minimum outcome of his next choices
+        int pickLeft = basket.get(i) + Math.min(
+            computeMaxFruits(basket, i + 2, j, dp), 
+            computeMaxFruits(basket, i + 1, j - 1, dp)
+        );
+
+        // Option 2: Kevin picks the right-most basket 'j'
+        // Mark will then optimally leave Kevin with the minimum outcome of his next choices
+        int pickRight = basket.get(j) + Math.min(
+            computeMaxFruits(basket, i + 1, j - 1, dp), 
+            computeMaxFruits(basket, i, j - 2, dp)
+        );
+
+        // Kevin chooses the path that maximizes his total fruits
+        dp[i][j] = Math.max(pickLeft, pickRight);
+        
+        return dp[i][j];
+    }
+}
