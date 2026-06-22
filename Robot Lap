@@ -1,0 +1,41 @@
+import java.util.Scanner;
+
+class Main {
+    public static String carReturnsToOrigin(int n, String moves) {
+        int x = 0;
+        int y = 0;
+        
+        // Track coordinate changes for each movement symbol
+        for (int i = 0; i < n; i++) {
+            char move = moves.charAt(i);
+            if (move == 'U') {
+                y++;
+            } else if (move == 'D') {
+                y--;
+            } else if (move == 'R') {
+                x++;
+            } else if (move == 'L') {
+                x--;
+            }
+        }
+        
+        // Check if we are back at the center
+        if (x == 0 && y == 0) {
+            return "YES";
+        } else {
+            return "NO";
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextInt()) {
+            int n = scanner.nextInt();
+            String moves = scanner.next();
+            
+            String result = carReturnsToOrigin(n, moves);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
