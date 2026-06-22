@@ -1,0 +1,53 @@
+import java.util.*;
+
+public class Main {
+    public static void user_logic(int n, List<int[]> positions) {
+        List<Integer> xCoords = new ArrayList<>();
+        List<Integer> yCoords = new ArrayList<>();
+        
+        for (int[] pos : positions) {
+            xCoords.add(pos[0]);
+            yCoords.add(pos[1]);
+        }
+        
+        // Sort both collections independently to find the median range
+        Collections.sort(xCoords);
+        Collections.sort(yCoords);
+        
+        long xChoices = 0;
+        long yChoices = 0;
+        
+        if (n % 2 != 0) {
+            // Odd number of elements -> exactly 1 median point
+            xChoices = 1;
+            yChoices = 1;
+        } else {
+            // Even number of elements -> range between the two central elements
+            int mid1 = (n / 2) - 1;
+            int mid2 = n / 2;
+            
+            xChoices = (long) xCoords.get(mid2) - xCoords.get(mid1) + 1;
+            yChoices = (long) yCoords.get(mid2) - yCoords.get(mid1) + 1;
+        }
+        
+        // Result calculation
+        long ans = xChoices * yChoices;
+        System.out.println(ans);
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNextInt()) {
+            int n = sc.nextInt();
+            List<int[]> positions = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                int x = sc.nextInt();
+                int y = sc.nextInt();
+                positions.add(new int[]{x, y});
+            }
+            
+            user_logic(n, positions);
+        }
+        sc.close();
+    }
+}
