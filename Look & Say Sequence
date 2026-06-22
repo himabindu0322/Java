@@ -1,0 +1,38 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+    public static String lookAndSaySequence(int n) {
+        // Base case: The first term of the sequence is always "1"
+        if (n == 1) {
+            return "1";
+        }
+        
+        String current = "1";
+        
+        // Generate terms from 2 up to n
+        for (int i = 2; i <= n; i++) {
+            StringBuilder nextTerm = new StringBuilder();
+            int length = current.length();
+            
+            int count = 1;
+            // Traverse the current string to read it out loud
+            for (int j = 1; j < length; j++) {
+                if (current.charAt(j) == current.charAt(j - 1)) {
+                    count++;
+                } else {
+                    // Append the frequency count and the digit character
+                    nextTerm.append(count).append(current.charAt(j - 1));
+                    count = 1; // Reset count for the new character sequence
+                }
+            }
+            // Append the last remaining group of identical characters
+            nextTerm.append(count).append(current.charAt(length - 1));
+            
+            // Move to the next term sequence
+            current = nextTerm.toString();
+        }
+        
+        return current;
+    }
+}
