@@ -1,0 +1,45 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    public static BinaryTreeNode<Integer> removeNode(BinaryTreeNode<Integer> root, int data) {
+        if (root == null) {
+            return null;
+        }
+
+        // Step 1: Navigate to the node that needs to be deleted
+        if (data < root.data) {
+            root.left = removeNode(root.left, data);
+        } else if (data > root.data) {
+            root.right = removeNode(root.right, data);
+        } else {
+            // Step 2: Found the target node. Handle the deletion cases.
+            
+            // Case 1 & 2: Leaf node or Node with only one child
+            if (root.left == null) {
+                return root.right;
+            } else if (root.right == null) {
+                return root.left;
+            }
+
+            // Case 3: Node with two children
+            // Get the inorder successor (smallest node in the right subtree)
+            root.data = findMinValue(root.right);
+
+            // Delete the inorder successor
+            root.right = removeNode(root.right, root.data);
+        }
+
+        return root;
+    }
+
+    // Helper function to find the minimum value in a given subtree
+    private static int findMinValue(BinaryTreeNode<Integer> node) {
+        int minValue = node.data;
+        while (node.left != null) {
+            minValue = node.left.data;
+            node = node.left;
+        }
+        return minValue;
+    }
+}
