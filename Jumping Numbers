@@ -1,0 +1,48 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    public static List<Integer> findJumpingNumbers(int n) {
+        List<Integer> result = new ArrayList<>();
+        
+        // Loop from 1 to 9 since the sequence focuses on positive integers
+        for (int i = 1; i <= 9 && i <= n; i++) {
+            bfs(n, i, result);
+        }
+        
+        // Sort the numbers to match the expected ascending order
+        Collections.sort(result);
+        return result;
+    }
+
+    private static void bfs(int n, int startDigit, List<Integer> result) {
+        Queue<Long> queue = new LinkedList<>();
+        queue.add((long) startDigit);
+        
+        while (!queue.isEmpty()) {
+            long num = queue.poll();
+            
+            if (num <= n) {
+                result.add((int) num);
+                
+                int lastDigit = (int) (num % 10);
+                
+                // Option A: Subtract 1 from last digit
+                if (lastDigit > 0) {
+                    long nextNum = (num * 10) + (lastDigit - 1);
+                    if (nextNum <= n) {
+                        queue.add(nextNum);
+                    }
+                }
+                
+                // Option B: Add 1 to last digit (This was missing!)
+                if (lastDigit < 9) {
+                    long nextNum = (num * 10) + (lastDigit + 1);
+                    if (nextNum <= n) {
+                        queue.add(nextNum);
+                    }
+                }
+            }
+        }
+    }
+}
