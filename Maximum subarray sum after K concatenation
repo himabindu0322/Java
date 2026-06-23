@@ -1,0 +1,72 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+
+    // Helper function implementing standard Kadane's Algorithm
+    private static long kadane(ArrayList<Integer> arr) {
+        long maxSoFar = Long.MIN_VALUE;
+        long maxEndingHere = 0;
+
+        for (int num : arr) {
+            maxEndingHere += num;
+            if (maxSoFar < maxEndingHere) {
+                maxSoFar = maxEndingHere;
+            }
+            if (maxEndingHere < 0) {
+                maxEndingHere = 0;
+            }
+        }
+        return maxSoFar;
+    }
+
+    public static long maxSubSumKConcat(ArrayList<Integer> arr, int n, int k) {
+        if (arr == null || n == 0 || k == 0) {
+            return 0;
+        }
+
+        // Case 1: If K is 1, it's just a normal maximum subarray sum problem
+        if (k == 1) {
+            return kadane(arr);
+        }
+
+        // Calculate total sum of a single repetition
+        long totalSum = 0;
+        for (int num : arr) {
+            totalSum += num;
+        }
+
+        // Calculate Maximum Prefix Sum
+        long maxPrefix = Long.MIN_VALUE;
+        long currentPrefix = 0;
+        for (int i = 0; i < n; i++) {
+            currentPrefix += arr.get(i);
+            maxPrefix = Math.max(maxPrefix, currentPrefix);
+        }
+
+        // Calculate Maximum Suffix Sum
+        long maxSuffix = Long.MIN_VALUE;
+        long currentSuffix = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            currentSuffix += arr.get(i);
+            maxSuffix = Math.max(maxSuffix, currentSuffix);
+        }
+
+        // Running Kadane on 2 copies of the array captures any sub-segment
+        // strictly contained inside a single block or bridging exactly 2 blocks.
+        ArrayList<Integer> doubleArr = new ArrayList<>(arr);
+        doubleArr.addAll(arr);
+        long maxSubsegmentTwoCopies = kadane(doubleArr);
+
+        // Case 2: Analyze transitions for K >= 2 copies
+        long ans;
+        if (totalSum > 0) {
+            ans = maxSuffix + (k - 2) * totalSum + maxPrefix;
+        } else {
+            ans = maxSuffix + maxPrefix;
+        }
+
+        // Return the maximum possible configuration found
+        return Math.max(ans, maxSubsegmentTwoCopies);
+    }
+}
