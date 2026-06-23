@@ -1,0 +1,50 @@
+import java.io.*;
+import java.util.*;
+
+class Main {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        // Read the number of items
+        if (!sc.hasNextInt()) return;
+        int n = sc.nextInt();
+        
+        // Store the items matrix
+        String[][] items = new String[n][3];
+        for (int i = 0; i < n; i++) {
+            items[i][0] = sc.next(); // type
+            items[i][1] = sc.next(); // color
+            items[i][2] = sc.next(); // name
+        }
+        
+        // Read the rule key and value
+        String ruleKey = sc.next();
+        String ruleValue = sc.next();
+        
+        // Determine the index to check based on ruleKey
+        int targetIndex = -1;
+        if (ruleKey.equals("type")) {
+            targetIndex = 0;
+        } else if (ruleKey.equals("color")) {
+            targetIndex = 1;
+        } else if (ruleKey.equals("name")) {
+            targetIndex = 2;
+        }
+        
+        // Count the matching items
+        int matchCount = 0;
+        if (targetIndex != -1) {
+            for (int i = 0; i < n; i++) {
+                if (items[i][targetIndex].equals(ruleValue)) {
+                    matchCount++;
+                }
+            }
+        }
+        
+        // Print the result
+        System.out.println(matchCount);
+        
+        sc.close();
+    }
+}
