@@ -1,0 +1,22 @@
+class Solution {
+    int maxPeopleDefeated(int p) {
+        int k = 0;
+        long currentSum = 0;
+        
+        while (true) {
+            // Calculate the cost of defeating the next person (k + 1)
+            long nextCost = (long) (k + 1) * (k + 1);
+            
+            // If we have enough strength left, defeat them
+            if (currentSum + nextCost <= p) {
+                currentSum += nextCost;
+                k++;
+            } else {
+                // Not enough strength to defeat the next person
+                break;
+            }
+        }
+        
+        return k;
+    }
+}
