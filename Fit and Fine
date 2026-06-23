@@ -1,0 +1,66 @@
+import java.util.*;
+
+class Main {
+    public static int[] userLogic(int[] fat, int[] protein, int[] vitamin) {
+        // Create HashSets for fast O(1) lookups
+        Set<Integer> fatSet = new HashSet<>();
+        Set<Integer> proteinSet = new HashSet<>();
+        Set<Integer> vitaminSet = new HashSet<>();
+
+        // Populate the sets with values from the respective arrays
+        for (int x : fat) fatSet.add(x);
+        for (int x : protein) proteinSet.add(x);
+        for (int x : vitamin) vitaminSet.add(x);
+
+        int exclusiveFatCount = 0;
+        int exclusiveProteinCount = 0;
+        int exclusiveVitaminCount = 0;
+
+        // 1. Count exclusive fat elements
+        for (int x : fat) {
+            if (!proteinSet.contains(x) && !vitaminSet.contains(x)) {
+                exclusiveFatCount++;
+            }
+        }
+
+        // 2. Count exclusive protein elements
+        for (int x : protein) {
+            if (!fatSet.contains(x) && !vitaminSet.contains(x)) {
+                exclusiveProteinCount++;
+            }
+        }
+
+        // 3. Count exclusive vitamin elements
+        for (int x : vitamin) {
+            if (!fatSet.contains(x) && !proteinSet.contains(x)) {
+                exclusiveVitaminCount++;
+            }
+        }
+
+        return new int[] {exclusiveFatCount, exclusiveProteinCount, exclusiveVitaminCount};
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        int n = sc.nextInt();
+        
+        int[] fat = new int[n];
+        int[] protein = new int[n];
+        int[] vitamin = new int[n];
+        
+        for (int i = 0; i < n; i++) {
+            fat[i] = sc.nextInt();
+        }
+        for (int i = 0; i < n; i++) {
+            protein[i] = sc.nextInt();
+        }
+        for (int i = 0; i < n; i++) {
+            vitamin[i] = sc.nextInt();
+        }
+        
+        int[] result = userLogic(fat, protein, vitamin);
+        System.out.println(result[0] + " " + result[1] + " " + result[2]);
+        sc.close();
+    }
+}
