@@ -1,0 +1,49 @@
+import java.util.Scanner;
+
+public class Main {
+    public static int minimumAddition(String str) {
+        if (str == null || str.isEmpty()) {
+            return 0;
+        }
+
+        // 1. Modify the last character to 'c'
+        char[] chars = str.toCharArray();
+        chars[chars.length - 1] = 'c';
+        String modifiedStr = new String(chars);
+
+        // 2. Find the length of the longest palindromic prefix using KMP LPS approach
+        String reversedStr = new StringBuilder(modifiedStr).reverse().toString();
+        String combined = modifiedStr + "#" + reversedStr;
+
+        int n = combined.length();
+        int[] lps = new int[n];
+        
+        // Compute LPS array
+        for (int i = 1; i < n; i++) {
+            int j = lps[i - 1];
+            while (j > 0 && combined.charAt(i) != combined.charAt(j)) {
+                j = lps[j - 1];
+            }
+            if (combined.charAt(i) == combined.charAt(j)) {
+                j++;
+            }
+            lps[i] = j;
+        }
+
+        // The length of the longest palindromic prefix
+        int longestPalindromicPrefixLength = lps[n - 1];
+
+        // The minimum additions needed at the beginning
+        return modifiedStr.length() - longestPalindromicPrefixLength;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextLine()) {
+            String input = scanner.nextLine().trim();
+            int result = minimumAddition(input);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
