@@ -1,0 +1,42 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+    // Helper function to count subarrays with AT MOST 'k' distinct elements
+    private static int countAtMostKDistinct(int[] arr, int n, int k) {
+        if (k <= 0) {
+            return 0;
+        }
+
+        int left = 0;
+        int totalSubarrays = 0;
+        // Using a HashMap to keep track of element frequencies within the window
+        Map<Integer, Integer> frequencyMap = new HashMap<>();
+
+        for (int right = 0; right < n; right++) {
+            // Add current element into the window map
+            frequencyMap.put(arr[right], frequencyMap.getOrDefault(arr[right], 0) + 1);
+
+            // Shrink the window from the left if distinct count exceeds 'k'
+            while (frequencyMap.size() > k) {
+                int leftElement = arr[left];
+                frequencyMap.put(leftElement, frequencyMap.get(leftElement) - 1);
+                
+                if (frequencyMap.get(leftElement) == 0) {
+                    frequencyMap.remove(leftElement);
+                }
+                left++;
+            }
+
+            // All subarrays ending at 'right' starting from anywhere between 'left' and 'right' are valid
+            totalSubarrays += (right - left + 1);
+        }
+
+        return totalSubarrays;
+    }
+
+    public static int goodSubarrays(int arr[], int n, int b) {
+        // Exactly(B) = AtMost(B) - AtMost(B - 1)
+        return countAtMostKDistinct(arr, n, b) - countAtMostKDistinct(arr, n, b - 1);
+    }
+}
