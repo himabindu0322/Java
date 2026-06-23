@@ -1,0 +1,44 @@
+import java.util.*;
+
+public class Solution {
+ 
+    // Helper function to calculate the length of the Longest Common Prefix (LCP)
+    private static int getLcpLength(String s1, String s2) {
+        int minLength = Math.min(s1.length(), s2.length());
+        int lcp = 0;
+        
+        while (lcp < minLength && s1.charAt(lcp) == s2.charAt(lcp)) {
+            lcp++;
+        }
+        
+        return lcp;
+    }
+
+    public static int maximumDistance(String[] arr) {
+        if (arr == null || arr.length < 2) {
+            return 0;
+        }
+
+        int n = arr.length;
+        int maxDist = 0;
+
+        // Compare every unique pair of binary strings
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                String s1 = arr[i];
+                String s2 = arr[j];
+                
+                int lcpLength = getLcpLength(s1, s2);
+                
+                // Distance formula: len(A) + len(B) - 2 * len(LCP)
+                int currentDist = s1.length() + s2.length() - (2 * lcpLength);
+                
+                if (currentDist > maxDist) {
+                    maxDist = currentDist;
+                }
+            }
+        }
+
+        return maxDist;
+    }
+}
