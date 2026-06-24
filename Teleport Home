@@ -1,0 +1,20 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(scanner.getInputStream() != null ? System.in : null);
+        
+        if (scanner.hasNextInt()) {
+            int D = scanner.nextInt();
+            int T = scanner.nextInt();
+            
+            // Calculate the minimum time needed
+            // If T >= D, the result is 0. Otherwise, it's D - T.
+            int minTime = Math.max(0, D - T);
+            
+            System.out.println(minTime);
+        }
+        
+        scanner.close();
+    }
+}
