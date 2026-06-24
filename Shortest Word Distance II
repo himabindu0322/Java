@@ -1,0 +1,39 @@
+import java.util.*;
+
+public class Solution {
+
+    public static int minimumDistance(String[] arr, String book1, String book2) {
+        List<Integer> indices1 = new ArrayList<>();
+        List<Integer> indices2 = new ArrayList<>();
+
+        // Step 1: Collect all indices for book1 and book2
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].equals(book1)) {
+                indices1.add(i);
+            } else if (arr[i].equals(book2)) {
+                indices2.add(i);
+            }
+        }
+
+        int minDistance = Integer.MAX_VALUE;
+        int p1 = 0, p2 = 0;
+
+        // Step 2: Use two pointers to find the minimum distance
+        while (p1 < indices1.size() && p2 < indices2.size()) {
+            int idx1 = indices1.get(p1);
+            int idx2 = indices2.get(p2);
+
+            // Update minimum distance
+            minDistance = Math.min(minDistance, Math.abs(idx1 - idx2));
+
+            // Move the pointer that has the smaller index value forward
+            if (idx1 < idx2) {
+                p1++;
+            } else {
+                p2++;
+            }
+        }
+
+        return minDistance;
+    }   
+}
