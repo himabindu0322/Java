@@ -1,0 +1,70 @@
+import java.util.*;
+
+public class Main {
+    // Helper function to check if a string is a palindrome
+    private static boolean isPalindrome(String s) {
+        int left = 0;
+        int right = s.length() - 1;
+        
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
+
+    public static String firstPalindrome(String[] words) {
+        for (String word : words) {
+            // Trim any accidental leading/trailing spaces from scanning
+            word = word.trim();
+            
+            // If the template read multiple words into one index due to nextLine(),
+            // we split it to check the actual words individually.
+            if (word.contains(" ")) {
+                String[] splitWords = word.split("\\s+");
+                for (String w : splitWords) {
+                    if (!w.isEmpty() && isPalindrome(w)) {
+                        return w;
+                    }
+                }
+            } else {
+                if (!word.isEmpty() && isPalindrome(word)) {
+                    return word;
+                }
+            }
+        }
+        return "";
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) {
+            System.out.println("");
+            return;
+        }
+        int n = scanner.nextInt();  // Read the number of strings
+        scanner.nextLine();  // Consume newline
+
+        if (n <= 0) {  // Edge case: No strings provided
+            System.out.println("");
+            return;
+        }
+
+        String[] arr = new String[n];
+        for (int i = 0; i < n; i++) {
+            if (scanner.hasNextLine()) {
+                arr[i] = scanner.nextLine();  // Read each string into the array
+            } else {
+                arr[i] = "";
+            }
+        }
+
+        // Call user logic function and print the output
+        String result = firstPalindrome(arr);
+        System.out.println(result);
+        scanner.close();
+    }
+}
