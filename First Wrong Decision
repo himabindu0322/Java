@@ -1,0 +1,33 @@
+import java.util.Scanner;
+
+public class Main {
+    public static int FirstWrongDecision(String s) {
+        int low = 0;
+        int high = s.length() - 1;
+        int result = -1;
+
+        // Perform Binary Search to find the first occurrence of 'W'
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (s.charAt(mid) == 'W') {
+                result = mid;       // 'W' found, but it might not be the first one
+                high = mid - 1;     // Look to the left to find an earlier 'W'
+            } else {
+                low = mid + 1;      // It's 'C', so the first 'W' must be to the right
+            }
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNext()) {
+            String str = scanner.next();
+            // Call the function FirstWrongDecision().
+            System.out.println(FirstWrongDecision(str));
+        }
+        scanner.close();
+    }
+}
