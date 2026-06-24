@@ -1,0 +1,49 @@
+import java.util.*;
+
+public class Solution {
+    public static int minimumSortedGroups(int n, int[] arr) {
+        if (n == 0) return 0;
+
+        // Stores the ending elements of each sorted group
+        List<Integer> groupEndings = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            int current = arr[i];
+            
+            // Binary search to find the best existing group to append 'current'
+            // We want the largest element in groupEndings that is <= current.
+            // Since we want to maximize the ending element, let's look at how groupEndings behaves.
+            // Actually, if we maintain groupEndings sorted in descending order:
+            // For example, if groupEndings is [5, 2], and current is 3:
+            // 5 is > 3 (invalid), 2 is <= 3 (valid). We replace 2 with 3 -> [5, 3].
+            // This maintains a descending order in groupEndings!
+            
+            int low = 0;
+            int high = groupEndings.size() - 1;
+            int targetIndex = -1;
+
+            // Binary search for the FIRST element in groupEndings (which is sorted in descending order)
+            // that is less than or equal to 'current'
+            while (low <= high) {
+                int mid = low + (high - low) / 2;
+                if (groupEndings.get(mid) <= current) {
+                    targetIndex = mid; // Potential match
+                    high = mid - 1;    // Try to find a larger element (further left in descending array)
+                } else {
+                    low = mid + 1;     // Elements are too large, look right
+                }
+            }
+
+            if (targetIndex != -1) {
+                // Update the ending element of that optimal group
+                groupEndings.set(targetIndex, current);
+            } else {
+                // Cannot fit into any existing group, create a new group
+                groupEndings.add(current);
+            }
+        }
+
+        // The number of active groups created is our answer
+        return groupEndings.size();
+    }
+}
