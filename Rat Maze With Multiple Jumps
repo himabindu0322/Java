@@ -1,0 +1,75 @@
+import java.util.ArrayList;
+
+class Solution {
+    public ArrayList<ArrayList<Integer>> shortestDist(int[][] mat) {
+        int n = mat.length;
+        
+        int[][] ans = new int[n][n];
+        // 0 = unvisited, 1 = visiting/visited and valid, -1 = visited but a dead-end
+        int[][] memo = new int[n][n]; 
+        
+        if (solveMaze(0, 0, mat, ans, memo, n)) {
+            ArrayList<ArrayList<Integer>> finalResult = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                ArrayList<Integer> row = new ArrayList<>();
+                for (int j = 0; j < n; j++) {
+                    row.add(ans[i][j]);
+                }
+                finalResult.add(row);
+            }
+            return finalResult;
+        }
+        
+        ArrayList<ArrayList<Integer>> noPath = new ArrayList<>();
+        ArrayList<Integer> fallback = new ArrayList<>();
+        fallback.add(-1);
+        noPath.add(fallback);
+        return noPath;
+    }
+    
+    private boolean solveMaze(int r, int c, int[][] mat, int[][] ans, int[][] memo, int n) {
+        // Destination reached
+        if (r == n - 1 && c == n - 1) {
+            ans[r][c] = 1;
+            return true;
+        }
+        
+        // Boundaries check or cell is blocked
+        if (r >= n || c >= n || mat[r][c] == 0) {
+            return false;
+        }
+        
+        // If we already know this cell is a dead-end, don't re-calculate
+        if (memo[r][c] == -1) {
+            return false;
+        }
+        
+        // Include current cell in the temporary path
+        ans[r][c] = 1;
+        
+        int maxJumps = mat[r][c];
+        
+        // Loop through jump lengths: Shortest jumps first (1 to maxJumps)
+        for (int k = 1; k <= maxJumps; k++) {
+            
+            // Preference 1: Jump k steps Forward (Right)
+            if (c + k < n) {
+                if (solveMaze(r, c + k, mat, ans, memo, n)) {
+                    return true;
+                }
+            }
+            
+            // Preference 2: Jump k steps Downward (Down)
+            if (r + k < n) {
+                if (solveMaze(r + k, c, mat, ans, memo, n)) {
+                    return true;
+                }
+            }
+        }
+        
+        // Backtrack and memoize that this cell cannot reach the destination
+        ans[r][c] = 0;
+        memo[r][c] = -1; 
+        return false;
+    }
+}
