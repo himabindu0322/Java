@@ -1,0 +1,72 @@
+import java.util.*;
+
+class Main {
+    static int[] dr = {1, -1, 0, 0};
+    static int[] dc = {0, 0, 1, -1};
+
+    // Added standard main method to handle platform execution and I/O
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] grid = new int[n][m];
+        
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                grid[i][j] = sc.nextInt();
+            }
+        }
+        
+        user_logic(n, m, grid);
+    }
+
+    public static void user_logic(int n, int m, int[][] grid) {
+        boolean[][] visited = new boolean[n][m];
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1 && !visited[i][j]) {
+                    int startR = i, startC = j;
+                    int endR = i, endC = j;
+
+                    ArrayDeque<int[]> q = new ArrayDeque<>();
+                    q.add(new int[]{i, j});
+                    visited[i][j] = true;
+
+                    while (!q.isEmpty()) {
+                        int[] cur = q.poll();
+                        int r = cur[0];
+                        int c = cur[1];
+
+                        // Keep the last cell in row-major order
+                        if (r > endR || (r == endR && c > endC)) {
+                            endR = r;
+                            endC = c;
+                        }
+
+                        for (int k = 0; k < 4; k++) {
+                            int nr = r + dr[k];
+                            int nc = c + dc[k];
+
+                            if (nr >= 0 && nr < n && nc >= 0 && nc < m
+                                    && grid[nr][nc] == 1 && !visited[nr][nc]) {
+                                visited[nr][nc] = true;
+                                q.add(new int[]{nr, nc});
+                            }
+                        }
+                    }
+
+                    sb.append(startR).append(' ')
+                      .append(startC).append(' ')
+                      .append(endR).append(' ')
+                      .append(endC).append('\n');
+                }
+            }
+        }
+
+        System.out.print(sb.toString());
+    }
+}
