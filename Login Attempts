@@ -1,0 +1,17 @@
+public class Solution {
+    public static String detectPattern(int n, int[] timestamps) {
+        // Write your code here
+        if(n < 3)
+        {
+            return "OK";
+        }
+        for(int i = 0;i <= n - 3;i++)
+        {
+            if(timestamps[i + 2] - timestamps[i] < 300)
+            {
+                return "Alert";
+            }
+        }
+        return "OK";
+    }
+}
