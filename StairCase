@@ -1,0 +1,23 @@
+public class Solution {
+    public static long equalizeStaircase(int[] heights, int n) {
+        // Write your code here
+        if(n <= 1)
+        {
+            return 0L;
+        }
+        int maxHeight = heights[0];
+        for(int i = 1;i < n;i++)
+        {
+            if(heights[i] > maxHeight)
+            {
+                maxHeight = heights[i];
+            }
+        }
+        long totalSteps = 0;
+        for(int i = 0;i < n;i++)
+        {
+            totalSteps += (maxHeight - heights[i]);
+        }
+        return totalSteps;
+    }
+}
