@@ -1,0 +1,39 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution {
+    public static double calculateArea(int n, int points[][]) {
+        double maxArea = 0.0;
+
+        // Iterate through all possible triplets of points
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    
+                    // Extract coordinates for 3 points
+                    long x1 = points[i][0];
+                    long y1 = points[i][1];
+                    
+                    long x2 = points[j][0];
+                    long y2 = points[j][1];
+                    
+                    long x3 = points[k][0];
+                    long y3 = points[k][1];
+
+                    // Use the Shoelace formula to find double the area to preserve precision
+                    long doubleArea = Math.abs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
+
+                    // Calculate actual area
+                    double currentArea = doubleArea / 2.0;
+
+                    // Keep track of the maximum area found
+                    if (currentArea > maxArea) {
+                        maxArea = currentArea;
+                    }
+                }
+            }
+        }
+
+        return maxArea;
+    }
+}
