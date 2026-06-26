@@ -1,0 +1,57 @@
+import java.util.*;
+
+public class Main {
+    public static int minParachutes(int k, int n) {
+        // Handle base cases for edge scenarios
+        if (n == 0) return 0;
+        if (k == 0) return 0;
+        if (n == 1) return 1;
+        if (k == 1) return n;
+
+        // dp[i][j] represents the min attempts for i parachutes and j floors
+        int[][] dp = new int[k + 1][n + 1];
+
+        // Base Case 1: 1 floor needs 1 attempt, 0 floors need 0 attempts
+        for (int i = 1; i <= k; i++) {
+            dp[i][0] = 0;
+            dp[i][1] = 1;
+        }
+
+        // Base Case 2: 1 parachute needs j attempts for j floors
+        for (int j = 1; j <= n; j++) {
+            dp[1][j] = j;
+        }
+
+        // Fill the rest of the DP table
+        for (int i = 2; i <= k; i++) {
+            for (int j = 2; j <= n; j++) {
+                dp[i][j] = Integer.MAX_VALUE;
+                
+                // Binary search or loop to find the optimal floor x to jump from
+                for (int x = 1; x <= j; x++) {
+                    int worstCase = Math.max(dp[i - 1][x - 1], dp[i][j - x]);
+                    int totalAttempts = 1 + worstCase;
+                    
+                    if (totalAttempts < dp[i][j]) {
+                        dp[i][j] = totalAttempts;
+                    }
+                }
+            }
+        }
+
+        return dp[k][n];
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextInt()) {
+            int n = scanner.nextInt();  // Number of floors
+            int k = scanner.nextInt();  // Number of parachutes
+            
+            // Note: The driver code passes (k, n) to our function
+            int result = minParachutes(k, n);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
