@@ -1,0 +1,30 @@
+class Solution {
+    public static int countWays(String s1, String s2) {
+        int n = s1.length();
+        int m = s2.length();
+        int MOD = 1_000_000_007;
+
+        // dp[j] stores the number of subsequences of s1 matching s2[0...j-1]
+        int[] dp = new int[m + 1];
+        
+        // Base case: an empty s2 can always be matched in 1 way
+        dp[0] = 1;
+
+        // Traverse through each character of s1
+        for (int i = 1; i <= n; i++) {
+            char c1 = s1.charAt(i - 1);
+            
+            // Traverse backwards to use values from the previous iteration safely
+            for (int j = m; j >= 1; j--) {
+                char c2 = s2.charAt(j - 1);
+                
+                if (c1 == c2) {
+                    dp[j] = (dp[j] + dp[j - 1]) % MOD;
+                }
+                // If c1 != c2, dp[j] remains dp[j] (equivalent to dp[i-1][j])
+            }
+        }
+
+        return dp[m];
+    }
+}
