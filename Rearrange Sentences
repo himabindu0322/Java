@@ -1,0 +1,45 @@
+import java.util.*;
+import java.io.*; 
+
+public class Solution {
+    public static List<String> reOrderSentences(String[] sentences) {
+        // Use Java's stable sort to maintain original order for number-sentences
+        Arrays.sort(sentences, (s1, s2) -> {
+            // Split both strings into two parts: [identifier, rest_of_the_sentence]
+            int index1 = s1.indexOf(' ');
+            String id1 = s1.substring(0, index1);
+            String body1 = s1.substring(index1 + 1);
+
+            int index2 = s2.indexOf(' ');
+            String id2 = s2.substring(0, index2);
+            String body2 = s2.substring(index2 + 1);
+
+            // Determine if the sentences are digit-based or letter-based
+            boolean isDigit1 = Character.isDigit(body1.charAt(0));
+            boolean isDigit2 = Character.isDigit(body2.charAt(0));
+
+            // Case 1: Both are letter-sentences
+            if (!isDigit1 && !isDigit2) {
+                int cmp = body1.compareTo(body2);
+                if (cmp != 0) {
+                    return cmp; // Sort lexicographically by body
+                }
+                return id1.compareTo(id2); // Tie-breaker: sort by identifier
+            }
+
+            // Case 2: One is letter-sentence, one is number-sentence
+            if (!isDigit1 && isDigit2) {
+                return -1; // Letter-sentence comes first
+            }
+            if (isDigit1 && !isDigit2) {
+                return 1; // Number-sentence comes last
+            }
+
+            // Case 3: Both are number-sentences
+            return 0; // Return 0 to keep their original relative order (stable sort)
+        });
+
+        // Convert the sorted array into a List<String> as requested by the function signature
+        return Arrays.asList(sentences);
+    }
+}
