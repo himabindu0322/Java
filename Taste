@@ -1,0 +1,42 @@
+import java.util.*;
+
+public class Main {
+    public static int computeMinMaxSaturation(int n, int[] sugar, int[] salt) {
+        // Step 1: Sort both arrays
+        Arrays.sort(sugar);
+        Arrays.sort(salt);
+        
+        int maxSaturation = 0;
+        
+        // Step 2: Pair the smallest sugar container with the largest salt container
+        for (int i = 0; i < n; i++) {
+            int currentSaturation = sugar[i] + salt[n - 1 - i];
+            // Step 3: Track the maximum saturation value found
+            if (currentSaturation > maxSaturation) {
+                maxSaturation = currentSaturation;
+            }
+        }
+        
+        return maxSaturation;
+    }
+    
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextInt()) {
+            int n = scanner.nextInt();
+            int[] sugar = new int[n];
+            int[] salt = new int[n];
+            
+            for (int i = 0; i < n; i++) {
+                sugar[i] = scanner.nextInt();
+            }
+            for (int i = 0; i < n; i++) {
+                salt[i] = scanner.nextInt();
+            }
+            
+            int result = computeMinMaxSaturation(n, sugar, salt);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
