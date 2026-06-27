@@ -1,0 +1,62 @@
+import java.io.*;
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int x) { val = x; }
+}
+
+public class Main {
+    public static TreeNode insertLevelOrder(String[] arr, int i) {
+        if (i >= arr.length || arr[i].equals("null")) {
+            return null;
+        }
+        TreeNode root = new TreeNode(Integer.parseInt(arr[i]));
+        root.left = insertLevelOrder(arr, 2 * i + 1);
+        root.right = insertLevelOrder(arr, 2 * i + 2);
+        return root;
+    }
+
+    public static int user_logic(TreeNode root) {
+        int[] result = robHelper(root);
+        // The answer will be the maximum of either robbing or not robbing the root node
+        return Math.max(result[0], result[1]);
+    }
+
+    private static int[] robHelper(TreeNode node) {
+        // Base case: if node is null, robbing or skipping it yields 0 money
+        if (node == null) {
+            return new int[]{0, 0};
+        }
+
+        // Post-order traversal: process left and right subtrees first
+        int[] left = robHelper(node.left);
+        int[] right = robHelper(node.right);
+
+        int[] current = new int[2];
+
+        // Scenario 1: Do NOT rob the current node
+        // We can choose the best outcome (rob or skip) from both left and right children
+        current[0] = Math.max(left[0], left[1]) + Math.max(right[0], right[1]);
+
+        // Scenario 2: Rob the current node
+        // We must NOT rob the left and right children (we take their left[0] and right[0])
+        current[1] = node.val + left[0] + right[0];
+
+        return current;
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String inputLine = br.readLine();
+        if (inputLine == null || inputLine.trim().isEmpty()) {
+            System.out.println(0);
+            return;
+        }
+        String[] data = inputLine.trim().split("\\s+");
+        TreeNode root = insertLevelOrder(data, 0);
+        int result = user_logic(root);
+        System.out.println(result);
+    }
+}
