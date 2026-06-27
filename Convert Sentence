@@ -1,0 +1,36 @@
+import java.util.*;
+import java.io.*;
+
+public class Solution 
+{
+    // Updated signature to accept both parameters passed by the Runner class
+    public static String convertSentence(String str, int n) 
+    {
+        // Array storing the key sequences matching alphabetical order 'a' through 'z'
+        String[] keypadMap = {
+            "2", "22", "222",        // a, b, c
+            "3", "33", "333",        // d, e, f
+            "4", "44", "444",        // g, h, i
+            "5", "55", "555",        // j, k, l
+            "6", "66", "666",        // m, n, o
+            "7", "77", "777", "7777",// p, q, r, s
+            "8", "88", "888",        // t, u, v
+            "9", "99", "999", "9999" // w, x, y, z
+        };
+
+        StringBuilder sequence = new StringBuilder();
+
+        // Loop through each character in the string
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            
+            // Find the 0-indexed alphabetic offset
+            int position = ch - 'a';
+            
+            // Append the keypad code sequence to our result
+            sequence.append(keypadMap[position]);
+        }
+
+        return sequence.toString();
+    }
+}
