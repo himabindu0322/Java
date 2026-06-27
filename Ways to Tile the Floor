@@ -1,0 +1,24 @@
+class Solution {
+    public int countWays(int n, int m) {
+        int MOD = 1000000007;
+        
+        // dp[i] will store the number of ways to tile a floor of size i x m
+        int[] dp = new int[n + 1];
+        
+        for (int i = 1; i <= n; i++) {
+            if (i < m) {
+                // Not enough height to place vertical tiles, only 1 way (all horizontal)
+                dp[i] = 1;
+            } else if (i == m) {
+                // Exactly enough height to choose either all horizontal or all vertical
+                dp[i] = 2;
+            } else {
+                // Choice 1: Place 1 horizontal tile -> dp[i-1]
+                // Choice 2: Place m vertical tiles side-by-side -> dp[i-m]
+                dp[i] = (dp[i - 1] + dp[i - m]) % MOD;
+            }
+        }
+        
+        return dp[n];
+    }
+}
