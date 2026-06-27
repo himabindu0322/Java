@@ -1,0 +1,67 @@
+import java.util.*;
+
+public class Main {
+    // Helper function to find the greatest common divisor
+    private static long gcd(long a, long b) {
+        while (b != 0) {
+            long temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    public static long count_pairs_divisible_by_k(int k, int n, int[] arr) {
+        // Map to store frequencies of each unique gcd(arr[i], k)
+        Map<Long, Long> gcdCounts = new HashMap<>();
+        
+        for (int num : arr) {
+            long currentGcd = gcd(num, k);
+            gcdCounts.put(currentGcd, gcdCounts.getOrDefault(currentGcd, 0L) + 1);
+        }
+
+        long totalPairs = 0;
+        
+        // Convert map keys to a list to iterate through unique pairs
+        List<Long> uniqueGcds = new ArrayList<>(gcdCounts.keySet());
+        int size = uniqueGcds.size();
+
+        for (int i = 0; i < size; i++) {
+            long g1 = uniqueGcds.get(i);
+            long count1 = gcdCounts.get(g1);
+
+            // Case 1: Pairs made of elements having the exact same GCD with k
+            if ((g1 * g1) % k == 0) {
+                totalPairs += (count1 * (count1 - 1)) / 2;
+            }
+
+            // Case 2: Pairs made of elements having two different GCDs with k
+            for (int j = i + 1; j < size; j++) {
+                long g2 = uniqueGcds.get(j);
+                long count2 = gcdCounts.get(g2);
+
+                if ((g1 * g2) % k == 0) {
+                    totalPairs += count1 * count2;
+                }
+            }
+        }
+
+        return totalPairs;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        if (scanner.hasNextInt()) {
+            int k = scanner.nextInt();
+            int n = scanner.nextInt();
+            int[] arr = new int[n];
+            for (int i = 0; i < n; i++) {
+                arr[i] = scanner.nextInt();
+            }
+            // Using long return type for result to prevent overflow for large outputs
+            long result = count_pairs_divisible_by_k(k, n, arr);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
