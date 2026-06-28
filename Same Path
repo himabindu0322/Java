@@ -1,0 +1,75 @@
+import java.util.*;
+
+class Node {
+    int val;
+    Node next;
+    Node(int x) { val = x; next = null; }
+}
+
+public class Main {
+    public static int check(Node l1, Node l2) {
+        // Create a set to store visited node object references from the first list
+        Set<Node> visitedNodes = new HashSet<>();
+        
+        // Traverse the first linked list and store all node instances
+        Node curr1 = l1;
+        while (curr1 != null) {
+            visitedNodes.add(curr1);
+            curr1 = curr1.next;
+        }
+        
+        // Traverse the second linked list and check for an intersection
+        Node curr2 = l2;
+        while (curr2 != null) {
+            if (visitedNodes.contains(curr2)) {
+                return 1; // Found a common intersecting node instance
+            }
+            curr2 = curr2.next;
+        }
+        
+        return 0; // No common node found
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        int n = sc.nextInt();  // Size of the first linked list
+        int m = sc.nextInt();  // Size of the second linked list
+        
+        Map<Integer, Node> map = new HashMap<>();
+        
+        // Create first linked list
+        Node l1 = new Node(0);
+        Node temp = l1;
+        for (int i = 0; i < n; i++) {
+            int t = sc.nextInt();
+            if (map.containsKey(t)) {
+                temp.next = map.get(t);
+            } else {
+                temp.next = new Node(t);
+                map.put(t, temp.next);
+            }
+            temp = temp.next;
+        }
+        l1 = l1.next;
+        
+        // Create second linked list
+        Node l2 = new Node(0);
+        temp = l2;
+        for (int i = 0; i < m; i++) {
+            int t = sc.nextInt();
+            if (map.containsKey(t)) {
+                temp.next = map.get(t);
+            } else {
+                temp.next = new Node(t);
+                map.put(t, temp.next);
+            }
+            temp = temp.next;
+        }
+        l2 = l2.next;
+        
+        // Call the user logic function
+        int result = check(l1, l2);
+        System.out.println(result);
+    }
+}
