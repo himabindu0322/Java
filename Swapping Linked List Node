@@ -1,0 +1,65 @@
+import java.util.*;
+
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode(int x) { val = x; next = null; }
+}
+
+public class Main {
+    public static ListNode swapNodes(ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+
+        ListNode first = head;
+        // Move 'first' pointer to the K-th node from the beginning
+        for (int i = 1; i < k; i++) {
+            first = first.next;
+        }
+
+        // Use a two-pointer approach to find the K-th node from the end
+        ListNode temp = first;
+        ListNode second = head;
+
+        while (temp.next != null) {
+            temp = temp.next;
+            second = second.next;
+        }
+
+        // Swap the values of the K-th node from start and K-th node from end
+        int tempVal = first.val;
+        first.val = second.val;
+        second.val = tempVal;
+
+        return head;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (!sc.hasNextInt()) return;
+        int n = sc.nextInt();
+        int[] values = new int[n];
+        for (int i = 0; i < n; i++) {
+            values[i] = sc.nextInt();
+        }
+        int k = sc.nextInt();
+
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        for (int value : values) {
+            current.next = new ListNode(value);
+            current = current.next;
+        }
+        ListNode head = dummy.next;
+
+        ListNode modified_head = swapNodes(head, k);
+
+        current = modified_head;
+        while (current != null) {
+            System.out.print(current.val + " ");
+            current = current.next;
+        }
+        System.out.println();
+    }
+}
