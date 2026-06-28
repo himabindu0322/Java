@@ -1,0 +1,68 @@
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int x) { val = x; left = null; right = null; }
+}
+
+public class Main {
+    public static List<Integer> userLogic(List<Integer> bst1Nodes, List<Integer> bst2Nodes) {
+        // Step 1: Sort individual lists (simulating in-order traversal lists)
+        Collections.sort(bst1Nodes);
+        Collections.sort(bst2Nodes);
+        
+        List<Integer> mergedList = new ArrayList<>(bst1Nodes.size() + bst2Nodes.size());
+        
+        int i = 0, j = 0;
+        int n = bst1Nodes.size();
+        int m = bst2Nodes.size();
+        
+        // Step 2: Use the two-pointer approach to merge the two sorted lists
+        while (i < n && j < m) {
+            if (bst1Nodes.get(i) <= bst2Nodes.get(j)) {
+                mergedList.add(bst1Nodes.get(i));
+                i++;
+            } else {
+                mergedList.add(bst2Nodes.get(j));
+                j++;
+            }
+        }
+        
+        // Append remaining elements from bst1Nodes if any
+        while (i < n) {
+            mergedList.add(bst1Nodes.get(i));
+            i++;
+        }
+        
+        // Append remaining elements from bst2Nodes if any
+        while (j < m) {
+            mergedList.add(bst2Nodes.get(j));
+            j++;
+        }
+        
+        return mergedList;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int N = sc.nextInt();
+        List<Integer> bst1Nodes = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            bst1Nodes.add(sc.nextInt());
+        }
+
+        int M = sc.nextInt();
+        List<Integer> bst2Nodes = new ArrayList<>();
+        for (int i = 0; i < M; i++) {
+            bst2Nodes.add(sc.nextInt());
+        }
+
+        List<Integer> result = userLogic(bst1Nodes, bst2Nodes);
+
+        for (int val : result) {
+            System.out.print(val + " ");
+        }
+        System.out.println();
+    }
+}
