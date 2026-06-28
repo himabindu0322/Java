@@ -1,0 +1,80 @@
+import java.util.*;
+import java.io.*; 
+
+public class Trie {
+    // Inner class representing each node in the Trie
+    private static class Node {
+        Node[] children;
+        int countWordsEnding;
+        int countPrefix;
+
+        Node() {
+            children = new Node[26]; // For lowercase english letters 'a' through 'z'
+            countWordsEnding = 0;
+            countPrefix = 0;
+        }
+    }
+
+    private final Node root;
+
+    public Trie() {
+        // Initialize the root node of the Trie
+        root = new Node();
+    }
+
+    public void insert(String word) {
+        Node curr = root;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            int index = ch - 'a';
+            
+            if (curr.children[index] == null) {
+                curr.children[index] = new Node();
+            }
+            curr = curr.children[index];
+            curr.countPrefix++; // One more word passes through this node
+        }
+        curr.countWordsEnding++; // A word ends at this node
+    }
+
+    public int countWordsEqualTo(String word) {
+        Node curr = root;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            int index = ch - 'a';
+            
+            if (curr.children[index] == null) {
+                return 0; // Word doesn't exist
+            }
+            curr = curr.children[index];
+        }
+        return curr.countWordsEnding;
+    }
+
+    public int countWordsStartingWith(String word) {
+        Node curr = root;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            int index = ch - 'a';
+            
+            if (curr.children[index] == null) {
+                return 0; // No words share this prefix
+            }
+            curr = curr.children[index];
+        }
+        return curr.countPrefix;
+    }
+
+    public void erase(String word) {
+        Node curr = root;
+        for (int i = 0; i < word.length(); i++) {
+            char ch = word.charAt(i);
+            int index = ch - 'a';
+            
+            // As per problem constraints, 'word' is guaranteed to exist in the Trie
+            curr = curr.children[index];
+            curr.countPrefix--; // Decrement prefix tracker
+        }
+        curr.countWordsEnding--; // Decrement ending tracker
+    }
+}
