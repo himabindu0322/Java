@@ -1,0 +1,41 @@
+class Solution {
+    public int countStrings(int n, int k) {
+        // If k is greater than or equal to n, it's impossible to have k adjacent 1s
+        if (k >= n) {
+            return 0;
+        }
+        
+        int MOD = 1000000007;
+        
+        // dp[i][j][last]
+        // i: current length of string (1 to n)
+        // j: current count of adjacent 1s (0 to k)
+        // last: 0 if last character is '0', 1 if last character is '1'
+        int[][][] dp = new int[n + 1][k + 1][2];
+        
+        // Base cases for length 1
+        dp[1][0][0] = 1; // String "0"
+        dp[1][0][1] = 1; // String "1"
+        
+        // Fill the DP table
+        for (int i = 2; i <= n; i++) {
+            for (int j = 0; j <= k; j++) {
+                
+                // Case 1: Appending '0' to strings of length (i-1)
+                dp[i][j][0] = (dp[i - 1][j][0] + dp[i - 1][j][1]) % MOD;
+                
+                // Case 2: Appending '1' to strings of length (i-1)
+                // Appending '1' after '0' doesn't increase adjacent count (remains j)
+                long continuousZero = dp[i - 1][j][0];
+                
+                // Appending '1' after '1' increases adjacent count (comes from j-1)
+                long continuousOne = (j > 0) ? dp[i - 1][j - 1][1] : 0;
+                
+                dp[i][j][1] = (int) ((continuousZero + continuousOne) % MOD);
+            }
+        }
+        
+        // The total number of valid strings of length n with k adjacent 1s
+        return (dp[n][k][0] + dp[n][k][1]) % MOD;
+    }
+}
